@@ -5,9 +5,7 @@ const {
   upgradeUserInfo,
 } = require('../controllers/users');
 
-const {
-  upgradeUserInfoValidation,
-} = require('../middlewares/validation');
+const { upgradeUserInfoValidation } = require('../middlewares/validation');
 
 router.get('/me', getUser);
 router.patch('/me', upgradeUserInfoValidation, upgradeUserInfo);

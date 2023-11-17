@@ -1,5 +1,4 @@
 const router = require('express').Router();
-
 const movieRoutes = require('./movies');
 const userRoutes = require('./users');
 
@@ -8,7 +7,6 @@ const auth = require('../middlewares/auth');
 const NotFoundError = require('../errors/NotFoundError');
 
 const { createUser, login } = require('../controllers/users');
-
 const { createUserValidation, loginValidation } = require('../middlewares/validation');
 
 router.use('/movies', auth, movieRoutes);
