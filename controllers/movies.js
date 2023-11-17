@@ -23,7 +23,7 @@ const createMovie = (req, res, next) => {
 };
 
 const deleteSavedMovie = (req, res, next) => {
-  Movie.findOne({ movieId: req.params.movieId })
+  Movie.findById(req.params._id)
     .orFail(() => Error('NotFound'))
     .then((movie) => {
       if (movie.owner.toString() !== req.user._id) {
@@ -31,9 +31,9 @@ const deleteSavedMovie = (req, res, next) => {
         return;
       }
 
-      Movie.deleteOne({ movieId: req.params.movieId })
+      Movie.findByIdAndDelete(movie._id)
         .then(() => {
-          return res.status(httpCode.OK_REQUEST).send({message: 'Фильм успешно удален'})
+          return res.status(httpCode.OK_REQUEST).send({ message: 'Фильм успешно удален' })
         })
         .catch((err) => next(err));
     })
