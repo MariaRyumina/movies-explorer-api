@@ -7,13 +7,12 @@ const {
 } = require('../controllers/movies');
 
 const {
-  getSavedMoviesValidation,
   createMovieValidation,
-  deleteMovieValidation,
+  deleteSavedMovieValidation,
 } = require('../middlewares/validation');
 
-router.get('/movies', getSavedMoviesValidation, getSavedMovies);
-router.post('/movies', createMovieValidation, createMovie);
-router.delete('/movies/_id', deleteMovieValidation, deleteSavedMovie);
+router.get('', getSavedMovies);
+router.post('', createMovieValidation, createMovie);
+router.delete('/:movieId', deleteSavedMovieValidation, deleteSavedMovie);
 
 module.exports = router;

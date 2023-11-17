@@ -1,9 +1,8 @@
 const { celebrate, Joi } = require('celebrate');
-const validator = require("validator");
 
 const URL_REGEX = /^https?:\/\/(www\.)?[\w-._~:/?#[\]@!$&’()*+,;=]*#?/;
 
-const getUserValidation = celebrate({
+const createUserValidation = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required(),
@@ -11,10 +10,17 @@ const getUserValidation = celebrate({
   }),
 });
 
+const loginValidation = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
+  }),
+});
+
 const upgradeUserInfoValidation = celebrate({
   body: Joi.object().keys({
+    email: Joi.string().required().email(),
     name: Joi.string().required().min(2).max(30),
-    about: Joi.string().required().min(2).max(30),
   }),
 });
 
@@ -28,29 +34,22 @@ const createMovieValidation = celebrate({
     image: Joi.string().required().regex(URL_REGEX),
     trailerLink: Joi.string().required().regex(URL_REGEX),
     thumbnail: Joi.string().required().regex(URL_REGEX),
-    owner: Joi.object().required(),
     movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
   }),
 });
 
-const getSavedMoviesValidation = celebrate({
+const deleteSavedMovieValidation = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().length(24).required(),
-  }),
-});
-
-const deleteMovieValidation = celebrate({
-  params: Joi.object().keys({
-    cardId: Joi.string().length(24).required(),
+    movieId: Joi.string().required().hex(),
   }),
 });
 
 module.exports = {
-  getUserValidation,
+  createUserValidation,
+  loginValidation,
   upgradeUserInfoValidation,
   createMovieValidation,
-  getSavedMoviesValidation,
-  deleteMovieValidation,
+  deleteSavedMovieValidation,
 };

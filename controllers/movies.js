@@ -5,7 +5,7 @@ const httpCode = require('../httpCode');
 const NotFoundError = require('../errors/NotFoundError');
 
 const getSavedMovies = (req, res, next) => {
-  Movie.find({ id: req.user._id })
+  Movie.find({ owner: req.user._id })
     .then((movies) => res.send(movies))
     .catch(next);
 };
@@ -23,15 +23,18 @@ const createMovie = (req, res, next) => {
 };
 
 const deleteSavedMovie = (req, res, next) => {
-  Movie.findById(req.params.movieId)
+  Movie.findOne({ movieId: req.params.movieId })
     .orFail(() => Error('NotFound'))
     .then((movie) => {
       if (movie.owner.toString() !== req.user._id) {
         next(new ForbiddenError('Нельзя удалять фильмы других пользователей!'));
         return;
       }
-      Movie.deleteOne({ id: movie._id })
-        .then(() => res.status(httpCode.OK_REQUEST).send({ message: 'Фильм успешно удален' }))
+
+      Movie.findByIdAndDelete()
+        .then(() => {
+          return res.status(httpCode.OK_REQUEST).send({message: 'Фильм успешно удален'})
+        })
         .catch((err) => next(err));
     })
     .catch((err) => {

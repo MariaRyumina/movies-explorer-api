@@ -9,11 +9,13 @@ const NotFoundError = require('../errors/NotFoundError');
 
 const { createUser, login } = require('../controllers/users');
 
-router.use(auth, movieRoutes);
-router.use(auth, userRoutes);
+const { createUserValidation, loginValidation } = require('../middlewares/validation');
 
-router.post('/signup', createUser);
-router.post('/signin', login);
+router.use('/movies', auth, movieRoutes);
+router.use('/users', auth, userRoutes);
+
+router.post('/signup', createUserValidation, createUser);
+router.post('/signin', loginValidation, login);
 
 router.use('/*', auth, (req, res, next) => {
   next(new NotFoundError('Страница не найдена'));
