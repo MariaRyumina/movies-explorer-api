@@ -31,7 +31,7 @@ const deleteSavedMovie = (req, res, next) => {
         return;
       }
 
-      Movie.findByIdAndDelete()
+      Movie.deleteOne({ movieId: req.params.movieId })
         .then(() => {
           return res.status(httpCode.OK_REQUEST).send({message: 'Фильм успешно удален'})
         })
