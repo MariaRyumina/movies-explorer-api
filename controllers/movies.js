@@ -39,6 +39,7 @@ const deleteSavedMovie = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
+        console.error(err);
         next(new ValidationError('Удаление фильма с некорректным id'));
         return;
       } if (err.message === 'NotFound') {
