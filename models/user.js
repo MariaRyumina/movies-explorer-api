@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const UnauthorizedError = require('../errors/UnauthorizedError');
+const {
+  ERROR_VALIDATION_INCORRECT_EMAIL,
+  ERROR_VALIDATION_INCORRECT_LENGTH,
+  ERROR_AUTH_INCORRECT_DATA,
+} = require('../utils/constants');
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -10,7 +15,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: (email) => validator.isEmail(email),
-      message: 'Неверный формат email',
+      message: ERROR_VALIDATION_INCORRECT_EMAIL,
     },
   },
   password: {
@@ -23,7 +28,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: ({ length }) => length >= 2 && length <= 30,
-      message: 'Поле должно содержать от 2 до 30 символов',
+      message: ERROR_VALIDATION_INCORRECT_LENGTH,
     },
   },
 });
@@ -33,12 +38,12 @@ userSchema.statics.findUserByCredentials = function (email, password) {
     .select('+password')
     .then((user) => {
       if (!user) {
-        return Promise.reject(new UnauthorizedError('Неправильные почта или пароль'));
+        return Promise.reject(new UnauthorizedError(ERROR_AUTH_INCORRECT_DATA));
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return Promise.reject(new UnauthorizedError('Неправильные почта или пароль'));
+            return Promise.reject(new UnauthorizedError(ERROR_AUTH_INCORRECT_DATA));
           }
           return user;
         });

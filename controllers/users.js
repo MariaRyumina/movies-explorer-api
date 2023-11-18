@@ -4,8 +4,13 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
 const ValidationError = require('../errors/ValidationError');
-const httpCode = require('../httpCode');
+const httpCode = require('../utils/httpCode');
 const ConflictError = require('../errors/ConflictError');
+const {
+  ERROR_VALIDATION_INCORRECT_DATA,
+  ERROR_NOT_FOUND_USER,
+  ERROR_CONFLICT,
+} = require('../utils/constants');
 
 const getUser = (req, res, next) => {
   User.findOne({ _id: req.user._id })
@@ -23,11 +28,15 @@ const upgradeUserInfo = (req, res, next) => {
         res.send(data);
         return;
       }
-      next(new NotFoundError('Пользователь с указанным _id не найден'));
+      next(new NotFoundError(ERROR_NOT_FOUND_USER));
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new ValidationError('Переданы некорректные данные при обновлении профиля'));
+        next(new ValidationError(ERROR_VALIDATION_INCORRECT_DATA));
+        return;
+      }
+      if (err.code === 11000) {
+        next(new ConflictError(ERROR_CONFLICT));
         return;
       }
       next(err);
@@ -54,11 +63,11 @@ const createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
+        next(new ConflictError(ERROR_CONFLICT));
         return;
       }
       if (err.name === 'ValidationError') {
-        next(new ValidationError('Переданы некорректные данные при создании пользователя'));
+        next(new ValidationError(ERROR_VALIDATION_INCORRECT_DATA));
         return;
       }
       next(err);
