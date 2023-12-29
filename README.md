@@ -2,6 +2,6 @@
 
 Адрес репозитория: https://github.com/MariaRyumina/movies-explorer-api
 
-IP 51.250.64.224
+IP 158.160.115.17
 
 Backend https://api.movies.ryumina.nomoredomainsmonster.ru/
