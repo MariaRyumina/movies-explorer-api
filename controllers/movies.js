@@ -21,6 +21,7 @@ const createMovie = (req, res, next) => {
     .then((movie) => res.send(movie))
     .catch((err) => {
       if (err.name === 'ValidationError') {
+        console.error(err);
         next(new ValidationError(ERROR_VALIDATION_INCORRECT_DATA));
         return;
       }
